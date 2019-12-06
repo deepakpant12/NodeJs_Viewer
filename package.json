@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "DB monitoring for ACH",
   "main": "app.js",
+  
   "scripts": {
-    "start": "nodemon app.js",
+   "install": "npm install --save",
+	"start": "nodemon app.js",
     "test": "echo \"Error: Monitoring tool\" && exit 1"
   },
   "dependencies": {
