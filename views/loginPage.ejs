@@ -1,0 +1,112 @@
+<% include partials/header %>			
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/status">
+					<table width="100%" border = 0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h3>Welcome to ACH logger</h3>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="referenceId">Transaction reference Number <font color="RED">*</font></label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/></div></td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td>
+							<!--div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+							  <input size="16" type="text" value="" readonly>
+							  <span class="add-on"><i class="icon-remove"></i></span>
+							  <span class="add-on"><i class="icon-calendar"></i></span>
+							</div-->
+							<td/>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+							<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+							<br>
+								<font color="BLUE" size="2">Click for transaction final status</font>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<br><br><br><br>
+			<div>
+				<% if(dbError != undefined ){ %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TAL_AUDIT_LOG table for provided reference ID </font></p>
+				<% } else{ %>
+					<%
+					if(data != undefined){ %>
+						<script type='text/javascript'>
+							var parser, xmlDoc;
+							parser = new DOMParser();
+						</script>
+						<% data.forEach(function(data){ %>
+						<script type='text/javascript'>
+							var parseXml;
+							if (typeof window.DOMParser != "undefined") {
+								parseXml = function(xmlStr) {
+									return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
+								};
+							} else if (typeof window.ActiveXObject != "undefined" &&
+								   new window.ActiveXObject("Microsoft.XMLDOM")) {
+								parseXml = function(xmlStr) {
+									var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
+									xmlDoc.async = "false";
+									xmlDoc.loadXML(xmlStr);
+									return xmlDoc;
+								};
+							} else {
+								throw new Error("No XML parser found");
+							}
+						</script>
+						 <table border=0>
+						 <tr><td>
+							<div class="tree" align="center">
+							  <ul>
+								<li>
+								  <a href="#" ><font size="2">Request message received with PAYMNT_REF_NUM: <font color="#bc4325" size="2"><%= data.PAYMNT_REF_NUM %></font> AND ACH_TRANS_ID: <font color="#bc4325" size="2"><%= data.ACH_TRANS_ID %></font></font> </a>
+								  <ul>
+									<li>
+									  <a href="#"><font color="BLUE" size="1"><%= data.PAYLOAD %> </font></a>
+									</li>
+								  </ul>
+								</li>
+							  </ul>
+							</div>
+							</td></tr>
+						<% }) %>
+						</table>
+					<%}%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="/css/login.css" rel="stylesheet" type="text/css">
+</head>
+<header id="header">
+		<div class="innertube" align= center>
+		</div>
+</header>
+<body>
+<br><br><br><br>
+<h2 align='center'>Login Page</h2>
+
+<form method="post" action="/login" >
+<table border= '0' align='center' style="width: 40%">
+<tr>
+	<td>
+	  <div class="container" >
+		<br><br><br>
+		<label for="userid"><b>Username</b></label><br>
+		<input type="text" placeholder="Enter Username" name="userid" required>
+		<label for="password"><b>Password</b></label><br>
+		<input type="password" placeholder="Enter Password" name="password" required>
+		<label for="environment"><b>Environment</b></label><br>
+		<select name= "environment">
+			<option value="" selected disabled hidden >Choose environment...</option>
+			<option value="ACHDEV01">ACHDEV01</option>
+			<option value="ACHDEV02">ACHDEV02</option>
+			<option value="ACHDEV03">ACHDEV03</option>
+			<option value="ACHSYS01">ACHSYS01</option>
+			<option value="ACHSYS02">ACHSYS02</option>
+			<option value="ACHSYS03">ACHSYS03</option>
+			<option value="ACHSYS05">ACHSYS05</option>
+			<option value="ACHSIT01">ACHSIT01</option>
+			<option value="ACHSIT02">ACHSIT02</option>
+			<option value="ACHNFT01">ACHNFT01</option>
+			<option value="ACHOAT01">ACHOAT01</option>
+			<option value="ACHPRD01">ACHPRD01</option>
+		</select>
+		<button type="submit">Login</button>
+		<% if(error != undefined){ %>
+			<p align ='center'><font color="#bc4325"><%= error%></font></p>
+		<% } %>
+		<br><br><br><br><br>
+	  </div>
+	</td>
+ </tr>
+</table>
+<nav id="left">
+	<div class="innertube" />
+</nav>	
+<div id="right">
+	<div class="innertube">
+	</div>
+</div>
+</body>
+<footer id="footer">
+		<div align="Left">				
+			<p>Created By <a href="#DeepakPant">Deepak Pant</a>.</p>
+		</div>
+</footer> 
+</html>

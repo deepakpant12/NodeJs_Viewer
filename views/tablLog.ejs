@@ -1,0 +1,123 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/TABL">
+					<table width="100%" border =0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h4>Search in TABL_ACH_BATCH_LOG table</h4>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="batchid">Batch Id <font color="RED">*</font></label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="batchid"/></div></td>
+						</tr>
+						<tr>
+							<td/>
+							<td><div class="form-group"><label for="referenceId">Transaction Reference No </label></div></td>
+							<td><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/></div></td>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+							<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>  
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div>
+				<% if(dbError != undefined ){ %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TABL_ACH_BATCH_LOG table </font></p>
+				<% } else{ %>
+					<script type='text/javascript'>
+					var rows =<%-JSON.stringify(data)%>
+					</script>
+					<% if(data != undefined){ var x = 1; %>
+						<p>Type something in the input field to search the table</p>
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">
+						<table width = '100%' class="table table-bordered table-striped">
+						  <thead>
+							<tr align ='center'>
+								<td><font color="#00BFFF">BATCH_ID</font></td>
+								<td><font color="#00BFFF">PAYMENT_REFERENCE_NUMBER</font></td>
+								<td><font color="#00BFFF">ACH_TRANSACTION_ID</font></td>	
+								<td><font color="#00BFFF">EXIT_SYSTEM_ID</font></td>	
+								<td><font color="#00BFFF">ACCOUNT_NUMBER</font></td>	
+								<td><font color="#00BFFF">SORT_CODE</font></td>	
+								<td><font color="#00BFFF">S_ACC_NO</font></td>	
+								<td><font color="#00BFFF">S_SORTCODE</font></td>	
+								<td><font color="#00BFFF">CR_DR_IND</font></td>	
+								<td><font color="#00BFFF">AMOUNT</font></td>	
+								<td><font color="#00BFFF">SCHEME_TYPE</font></td>	
+								<td><font color="#00BFFF">AGGR_TYPE</font></td>	
+								<td><font color="#00BFFF">ACC_TYPE</font></td>	
+								<td><font color="#00BFFF">POSTING_MODE</font></td>	
+								<td><font color="#00BFFF">POSTING_TYPE</font></td>
+								<td><font color="#00BFFF">ACC_DESC</font></td>
+								<td><font color="#00BFFF">PAYLOAD</font></td>
+								<td><font color="#00BFFF">TARGET_ID</font></td>
+								<td><font color="#00BFFF">AUDIT_TSTAMP</font></td>	
+							</tr>
+						  </thead>
+							<% data.forEach(function(data){ %>
+						  <tbody id="myTable">
+								<tr>
+									<td><font size="1"><%= data.BATCH_ID %></font></td>
+									<td><font size="1"><%= data.PAYMNT_REF_NUM %></font></td>
+									<td><font size="1"><%= data.ACH_TRANS_ID %></font></td>
+									<td><font size="1"><%= data.EXT_SYS_ID %></font></td>
+									<td><font size="1"><%= data.ACC_NO %></font></td>
+									<td><font size="1"><%= data.SORTCODE %></font></td>
+									<td><font size="1"><%= data.S_ACC_NO %></font></td>
+									<td><font size="1"><%= data.S_SORTCODE %></font></td>
+									<td><font size="1"><%= data.CR_DR_IND%></font></td>
+									<td><font size="1"><%= data.AMOUNT %></font></td>
+									<td><font size="1"><%= data.SCHEME_TYPE %></font></td>
+									<td><font size="1"><%= data.AGGR_TYPE %></font></td>
+									<td><font size="1"><%= data.ACC_TYPE %></font></td>
+									<td><font size="1"><%= data.POSTING_MODE %></font></td>
+									<td><font size="1"><%= data.POSTING_TYPE %></font></td>
+									<td><font size="1"><%= data.ACC_DESC %></font></td>
+									<td>
+										<font size="1">
+										<div class="container">
+											<p align= center><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dropDown<%= x %>">Payload</button></p>
+											<div id="dropDown<%= x %>" class="collapse">		
+												<%= data.PAYLOAD %>
+											</div>
+										</div>
+										</font>
+									</td>
+									<td><font size="1"><%= data.TARGET_ID %></font></td>
+									<td><font size="1"><%= data.AUDIT_TSTAMP %></font></td>
+								</tr>
+							<% x++;}) %>
+						  </tbody>
+						</table>
+					<% }%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>	

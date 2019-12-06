@@ -1,0 +1,89 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/TBA">
+					<table width="100%" border =0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h4>Search in TBA_BATCH_AUDIT_LOG table</h4>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="referenceId">Trigger Request Id <font color="RED">*</font></label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/><div></td>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+							<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div>
+				<% if(dbError != undefined ){ %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TBA_BATCH_AUDIT_LOG table for provided trigger request ID </font></p>
+				<% } else{ %>
+					<script type='text/javascript'>
+					var rows =<%-JSON.stringify(data)%>
+					</script>
+					<% if(data != undefined){ %>
+						<p>Type something in the input field to search the table</p>  
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">
+						<table width = '100%' class="table table-bordered table-striped">
+						  <thead>
+							<tr align ='center'>
+								<td><font color="#00BFFF">COMPONENT ID</font></td>
+								<td><font color="#00BFFF">DESCRIPTION</font></td>
+								<td><font color="#00BFFF">BATCH_REQUEST_ID</font></td>	
+								<td><font color="#00BFFF">BATCH_ID</font></td>	
+								<td><font color="#00BFFF">EXIT_SYSTEM_ID</font></td>	
+								<td><font color="#00BFFF">GROUP_CODE</font></td>	
+								<td><font color="#00BFFF">AGGREGATION_TYPE</font></td>	
+								<td><font color="#00BFFF">TRIGGER_TYPE</font></td>
+								<td><font color="#00BFFF">AUDIT_TIME_STAMP</font></td>	
+							</tr>
+						  </thead>	
+							<% data.forEach(function(data){ %>
+							  <tbody id="myTable">
+								<tr>
+									<td><font size="1"><%= data.COMP_ID %></font></td>
+									<td><font size="1"><%= data.DESCRIPTION %></font></td>
+									<td><font size="1"><%= data.REQUESTID %></font></td>
+									<td><font size="1"><%= data.BATCH_ID %></font></td>
+									<td><font size="1"><%= data.EXT_SYS_ID %></font></td>
+									<td><font size="1"><%= data.GROUP_CODE %></font></td>
+									<td><font size="1"><%= data.AGGR_TYPE %></font></td>
+									<td><font size="1"><%= data.TRIGGER_TYPE %></font></td>
+									<td><font size="1"><%= data.AUDIT_TSTAMP %></font></td>
+								</tr>
+							<% }) %>
+						  </tbody>
+						</table>
+					<% }%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>	

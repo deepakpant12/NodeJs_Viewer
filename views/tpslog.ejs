@@ -1,0 +1,97 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/TPS">
+					<table width="100%" border =0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h4>Search in TPS_POSTING_STATE table</h4>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="referenceId">Transaction reference Number <font color="RED">*</font></label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/></div></td>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div>
+				<% if(dbError != undefined ){  %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TPS_POSTING_STATE table for provided trigger request id </font></p>
+				<% } else{ %>
+					<script type='text/javascript'>
+					var rows =<%-JSON.stringify(data)%>
+					</script>
+					<% if(data != undefined){ %>
+						<p>Type something in the input field to search the table</p>
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">
+						<table width = '100%' class="table table-bordered table-striped">
+						  <thead>
+							<tr align ='center'>
+								<td><font color="#00BFFF">PAYMNT_REF_NUM</font></td>						
+								<td><font color="#00BFFF">ACH_TRANS_ID</font></td>                
+								<td><font color="#00BFFF">EXT_SYS_ID</font></td>	                
+								<td><font color="#00BFFF">TXN_STATUS</font></td>	            
+								<td><font color="#00BFFF">RSP_STATUS</font></td>	            
+								<td><font color="#00BFFF">SCHEME_TYPE</font></td>	                
+								<td><font color="#00BFFF">POSTING_TYPE</font></td>	    
+								<td><font color="#00BFFF">POSTING_MODE</font></td>	        
+								<td><font color="#00BFFF">POSTING_COUNT</font></td>	            
+								<td><font color="#00BFFF">SOURCE</font></td>
+								<td><font color="#00BFFF">TARGET</font></td>	        
+								<td><font color="#00BFFF">STANDIN_FLAG</font></td>	            
+								<td><font color="#00BFFF">CREATE_TSTMP</font></td>
+							</tr>                                                               
+						  </thead>                                                              
+							<% data.forEach(function(data){ %>                                  
+						  <tbody id="myTable">                                                  
+								<tr>                                                            
+									<td><font size="1"><%= data.PAYMNT_REF_NUM %></font></td>
+									<td><font size="1"><%= data.ACH_TRANS_ID %></font></td>
+									<td><font size="1"><%= data.EXT_SYS_ID %></font></td>
+									<td><font size="1"><%= data.TXN_STATUS %></font></td>
+									<td><font size="1"><%= data.RSP_STATUS %></font></td>
+									<td><font size="1"><%= data.SCHEME_TYPE %></font></td>
+									<td><font size="1"><%= data.POSTING_TYPE %></font></td>
+									<td><font size="1"><%= data.POSTING_MODE %></font></td>
+									<td><font size="1"><%= data.POSTING_COUNT %></font></td>
+									<td><font size="1"><%= data.SOURCE %></font></td>
+									<td><font size="1"><%= data.TARGET %></font></td>
+									<td><font size="1"><%= data.STANDIN_FLAG %></font></td>
+									<td><font size="1"><%= data.CREATE_TSTMP %></font></td>
+								</tr>
+							<%}) %>
+						  </tbody>
+						</table>
+					<% }%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>	

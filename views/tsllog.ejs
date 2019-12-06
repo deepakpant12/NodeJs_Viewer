@@ -1,0 +1,109 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/TSL">
+					<table width="100%" border =0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h4>Search in TSL_STANDIN_LOG table</h4>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="batchid">Batch Id <font color="RED">*</font></label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="batchid"/></div></td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="referenceId">Transaction reference number </label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/></div></td>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div>
+				<% if(dbError != undefined ){  %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TSL_STANDIN_LOG table for provided reference number </font></p>
+				<% } else{ %>
+					<script type='text/javascript'>
+					var rows =<%-JSON.stringify(data)%>
+					</script>
+					<% if(data != undefined){ var y = 1; %>
+						<p>Type something in the input field to search the table</p>
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">   
+						<table width = '100%' class="table table-bordered table-striped">              
+						  <thead>                                                                      
+							<tr align ='center'>
+								<td><font color="#00BFFF">BATCH_ID</font></td>
+								<td><font color="#00BFFF">PAYMNT_REF_NUM</font></td>
+								<td><font color="#00BFFF">ACH_TRANS_ID</font></td>
+								<td><font color="#00BFFF">PAYMNT_STATUS</font></td>
+								<td><font color="#00BFFF">SCHEME_TYPE</font></td>
+								<td><font color="#00BFFF">TARGET_ID</font></td>
+								<td><font color="#00BFFF">TXN_STATUS</font></td>
+								<td><font color="#00BFFF">STANDIN_COUNT</font></td>
+								<td><font color="#00BFFF">LAST_RETRY_TSTAM</font></td>
+								<td><font color="#00BFFF">DEPENDENT_ID</font></td>
+								<td><font color="#00BFFF">POSTING_SEQUENCE</font></td>
+								<td><font color="#00BFFF">PAYLOAD</font></td>
+								<td><font color="#00BFFF">CREATE_TSTAMP</font></td>
+							</tr>
+						  </thead>
+							<% data.forEach(function(data){ %>
+						  <tbody id="myTable">
+								<tr>
+									<td><font size="1"><%= data.BATCH_ID %></font></td>
+									<td><font size="1"><%= data.PAYMNT_REF_NUM %></font></td>
+									<td><font size="1"><%= data.ACH_TRANS_ID %></font></td>
+									<td><font size="1"><%= data.PAYMNT_STATUS %></font></td>
+									<td><font size="1"><%= data.SCHEME_TYPE %></font></td>
+									<td><font size="1"><%= data.TARGET_ID %></font></td>
+									<td><font size="1"><%= data.TXN_STATUS %></font></td>
+									<td><font size="1"><%= data.STANDIN_COUNT %></font></td>
+									<td><font size="1"><%= data.LAST_RETRY_TSTAM %></font></td>
+									<td><font size="1"><%= data.DEPENDENT_ID %></font></td>
+									<td><font size="1"><%= data.POSTING_SEQUENCE %></font></td>
+									<td width: 10px><font size="1">
+										<div class="container">
+											<p align= center><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dropDown<%= y %> ">Payload</button></p>
+											<div id="dropDown<%= y %>" class="collapse">		
+												<%= data.PAYLOAD %>
+											</div>
+										</div>
+									</font></td>
+									<td><font size="1"><%= data.CREATE_TSTAMP %></font></td>
+								</tr>
+							<% y++;}) %>
+						  </tbody>
+						</table>
+					<% }%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>	

@@ -1,0 +1,89 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/serviceStats">
+					<table width="100%" border =0>
+						<tr align = center>
+							<td colspan="5" width="100%">
+								<h4><strong>ACH Service Statistics</strong></h4>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group">
+								<label for="eventDate">Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+								<input type="date" name="searchWithDate"/></div>
+							</td>
+							<td width="30%"> <div class="form-group">
+								&nbsp; <button type="submit" class="btn btn-info">submit</button>
+								</div>
+							</td>
+							<td width="15%"/>
+						</tr>
+						<tr align = center>
+							<td width="15%"/>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+							<td width="15%"/>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div  align = center>
+			  <% if(data != undefined){ %>
+				<table style=border-color: "black"; border="1"; height: 122px;" width="606">
+				  <thead>
+					<tr align ='center'>
+						<td style="width: 194.66px; text-align: center;"><strong>Scheme</strong></td>
+						<td style="width: 194.67px; text-align: right;"><strong>Transactoin Count</strong></td>
+						<td style="width: 194.67px; text-align: center;"><strong>% Within SLA</strong></td>
+					</tr>
+				  </thead>
+				  <tbody id="myTable">
+						<tr>
+							<td	style="width: 194.66px; text-align: left;">&nbsp;&nbsp;CHAPS</td>
+							<td style="width: 194.67px; text-align: right;">506541&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td style="width: 194.67px; text-align: right;">&nbsp;&nbsp;99.2&nbsp;&nbsp;</td>
+						</tr>
+						<tr>
+							<td style="width: 194.66px; text-align: left;">&nbsp;&nbsp;INTERNATIONAL</td>
+							<td style="width: 194.67px; text-align: right;">4587876&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td style="width: 194.67px; text-align: right;">&nbsp;&nbsp;100.0&nbsp;&nbsp;</td>
+						</tr>
+						<tr>
+							<td style="width: 194.66px; text-align: left;">&nbsp;&nbsp;ICS</td>
+							<td style="width: 194.67px; text-align: right;">96541&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td style="width: 194.67px; text-align: right;">&nbsp;&nbsp;99.3&nbsp;&nbsp;</td>
+						</tr>
+						<tr>
+							<td style="width: 194.66px; text-align: left;">&nbsp;&nbsp;GBPTransfer</td>
+							<td style="width: 194.67px; text-align: right;">6547&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td style="width: 194.67px; text-align: right;">&nbsp;&nbsp;99.3&nbsp;&nbsp;</td>
+						</tr>
+						<tr>
+							<td style="width: 194.66px; text-align: left;">&nbsp;&nbsp;BACS</td>
+							<td style="width: 194.67px; text-align: right;">1545&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td style="width: 194.67px; text-align: right;">&nbsp;&nbsp;100.0&nbsp;&nbsp;</td>
+						</tr>										
+				  </tbody>
+				</table>
+			  <% } %>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>

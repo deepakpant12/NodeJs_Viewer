@@ -1,0 +1,108 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/TAL">
+					<table width="100%" border = 0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h4>Search in TAL_AUDIT_LOG table</h4>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="referenceId">Transaction reference Number <font color="RED">*</font></label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/></div></td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td>
+							<!--div class="input-append date form_datetime" data-date="2013-02-21T15:25:00Z">
+							  <input size="16" type="text" value="" readonly>
+							  <span class="add-on"><i class="icon-remove"></i></span>
+							  <span class="add-on"><i class="icon-calendar"></i></span>
+							</div-->
+							<td/>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+							<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div>
+				<% if(dbError != undefined ){ %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TAL_AUDIT_LOG table for provided reference ID </font></p>
+				<% } else{ %>
+					<script type='text/javascript'>
+					var rows =<%-JSON.stringify(data)%>
+					</script>
+					<% if(data != undefined){ var x = 1; %>
+						<p>Type something in the input field to search the table</p>
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">
+						<table width = '100%' class="table table-bordered table-striped">
+						  <thead>
+							<tr align ='center'>
+								<td><font color="#00BFFF">COMPONENT ID</font></td>
+								<td><font color="#00BFFF">DESCRIPTION</font></td>
+								<td><font color="#00BFFF">PAYMENT_REFERENCE_NUMBER</font></td>	
+								<td><font color="#00BFFF">ACH_TRANSACTION_ID</font></td>
+								<td><font color="#00BFFF">TYPE</font></td>
+								<td><font color="#00BFFF">SCHEME_TYPE</font></td>	
+								<td><font color="#00BFFF">ACCOUNT_NUMBER</font></td>	
+								<td><font color="#00BFFF">SORT_CODE</font></td>	
+								<td><font color="#00BFFF">PAYLOAD</font></td>	
+								<td><font color="#00BFFF">AUDIT_TIMESTAMP</font></td>	
+							</tr>
+						  </thead>
+							<% data.forEach(function(data){ %>
+						  <tbody id="myTable">
+								<tr>
+									<td><font size="1"><%= data.COMP_ID %></font></td>
+									<td><font size="1"><%= data.DESCRIPTION %></font></td>
+									<td><font size="1"><%= data.PAYMNT_REF_NUM %></font></td>
+									<td><font size="1"><%= data.ACH_TRANS_ID %></font></td>
+									<td><font size="1"><%= data.TYPE %></font></td>
+									<td><font size="1"><%= data.SCHEME_TYPE %></font></td>
+									<td><font size="1"><%= data.ACC_NO %></font></td>
+									<td><font size="1"><%= data.SORTCODE %></font></td>
+									<td><font size="1">
+										<div class="container">
+											<p align= center><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dropDown<%= x %>">Payload</button></p>
+											<div id="dropDown<%= x %>" class="collapse">		
+												<%= data.PAYLOAD %>
+											</div>
+										</div>
+									</font></td>
+									<td><font size="1"><%= data.AUDIT_TSTAMP %></font></td>
+								</tr>
+							<%  x++;}) %>
+						  </tbody>
+						</table>
+					<%}%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>	

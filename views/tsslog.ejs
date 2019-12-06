@@ -1,0 +1,103 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/TSS">
+					<table width="100%" border =0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h4>Search in TSS_SESSION_STATE table</h4>
+							</td>
+						</tr>
+						<tr>
+							<td/>
+							<td><div class="form-group"><label for="createDate">Trigger date <font color="RED">*</font></label></div></td>
+							<td><div class="form-group"><input type="date" style="width: 400px" name="createDate"/></div></td>
+						</tr>
+						<tr>
+							<td width="15%"/>
+							<td width="25%"><div class="form-group"><label for="referenceId">Trigger Request Id </label></div></td>
+							<td width="60%"><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/></div></td>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %>   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div>
+				<% if(dbError != undefined ){  %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TSS_SESSION_STATE table for provided trigger request id </font></p>
+				<% } else{ %>
+					<script type='text/javascript'>
+					var rows =<%-JSON.stringify(data)%>
+					</script>
+					<% if(data != undefined){ var y = 1; %>
+						<p>Type something in the input field to search the table</p>
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">
+						<table width = '100%' class="table table-bordered table-striped">
+						  <thead>
+							<tr align ='center'>
+								<td><font color="#00BFFF">MSGID</font></td>
+								<td><font color="#00BFFF">REQUEST_ID</font></td>
+								<td><font color="#00BFFF">BATCH_ID</font></td>	
+								<td><font color="#00BFFF">INTERFACE_ID</font></td>	
+								<td><font color="#00BFFF">GROUP_CODE</font></td>	
+								<td><font color="#00BFFF">PAYLOAD</font></td>	
+								<td><font color="#00BFFF">TRANSACTION_STATUS</font></td>	
+								<td><font color="#00BFFF">RESPONSE_STATUS</font></td>	
+								<td><font color="#00BFFF">RECORD_COUNT</font></td>	
+								<td><font color="#00BFFF">AUDIT_TIME_STAMP</font></td>	
+							</tr>
+						  </thead>
+							<% data.forEach(function(data){ %>
+						  <tbody id="myTable">
+								<tr>
+									<td><font size="1"><%= data.MSGID %></font></td>
+									<td><font size="1"><%= data.UNIQUE_ID %></font></td>
+									<td><font size="1"><a href="/search/tabl/<%= data.DEPENDENT_UNIQUE_ID %>"><%= data.DEPENDENT_UNIQUE_ID %></a></font></td>
+									<td><font size="1"><%= data.INTERFACE_ID %></font></td>
+									<td><font size="1"><%= data.GRP_CODE %></font></td>
+									<td width: 10px><font size="1">
+										<div class="container">
+											<p align= center><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dropDown<%= y %> ">Payload</button></p>
+											<div id="dropDown<%= y %>" class="collapse">		
+												<%= data.MESSAGEDATA %>
+											</div>
+										</div>
+									</font></td>
+									<td><font size="1"><%= data.TXN_STATUS %></font></td>
+									<td><font size="1"><%= data.RSP_STATUS %></font></td>
+									<td><font size="1"><%= data.RECORD_COUNT %></font></td>
+									<td><font size="1"><%= data.CREATE_TSTMP %></font></td>
+								</tr>
+							<% y++;}) %>
+						  </tbody>
+						</table>
+					<% }%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>	

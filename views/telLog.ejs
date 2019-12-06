@@ -1,0 +1,103 @@
+<% include partials/header %>		
+		<main>
+			<div class="innertube" align = center >
+				<form method="post" action="/TEL">
+					<table width="100%" border =0>
+						<tr align = center>
+							<td colspan="3" width="100%">
+								<h4>Search in TEL_EXCEPTION_LOG table</h4>
+							</td>
+						</tr>
+						<tr>
+							<td width="15%">
+							<td width="25%"><div class="form-group"><label for="AUDIT_TSTAMP">AUDIT_TSTAMP <font color="RED">*</font></label></div></td>
+							<td width="60%"><div class="form-group">From <input type="date" name="fromDate"/> To <input type="date" name="toDate"/></div></td>
+						</tr>
+						<tr>
+							<td/>
+							<td><div class="form-group"><label for="referenceId">Transaction reference Number</label></div></td>
+							<td><div class="form-group"><input type="text" style="width: 400px" name="referenceId"/></div></td>
+						</tr>
+						<tr align = center>
+							<td colspan="3" width="100%">
+							<button type="submit" class="btn btn-info">submit</button>
+							</td>
+						</tr>
+						<tr align = center>
+							<td colspan="3"><font color="#bc4325">
+								<% if(errors != undefined){ %>
+									<ul><br>
+									<% errors.forEach(function(error){ %>
+										<%= error.msg %> ,   
+									<% }) %>
+									</ul>
+								<% } %></font>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div>
+				<% if(dbError != undefined ){ %>
+					<p align ='center'><font color="#1b2631"><%= dbError%></font></p>
+				<% } else if(size == 0 ){ %>
+						<p align ='center'><font color="#1b2631">No Data in TEL_EXCEPTION_LOG table </font></p>
+				<% } else{ %>
+					<script type='text/javascript'>
+					var rows =<%-JSON.stringify(data)%>
+					</script>
+					<% if(data != undefined){ var x = 1; %>
+						<p>Type something in the input field to search the table</p>
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">
+						<table width = '100%' class="table table-bordered table-striped">
+						  <thead>
+							<tr align ='center'>
+								<td><font color="#00BFFF">COMPONENT ID</font></td>
+								<td><font color="#00BFFF">PMNT_REF_NUM</font></td>
+								<td><font color="#00BFFF">ACH_TRANSACTION_ID</font></td>
+								<td><font color="#00BFFF">ERROR_CODE</font></td>
+								<td><font color="#00BFFF">ERROR_REASON_SevCode</font></td>	
+								<td><font color="#00BFFF">ERROR_TYPE</font></td>	
+								<td><font color="#00BFFF">ERROR_TEXT</font></td>	
+								<td><font color="#00BFFF">ERROR_DETAIL</font></td>	
+								<td><font color="#00BFFF">ERROR_OWNER</font></td>	
+								<td><font color="#00BFFF">AUDIT_TIMESTAMP</font></td>	
+							</tr>
+						  </thead>
+							<% data.forEach(function(data){ %>
+						  <tbody id="myTable">
+								<tr>
+									<td><font size="1"><%= data.COMP_ID %></font></td>
+									<td><font size="1"><%= data.PMNT_REF_NUM %></font></td>
+									<td><font size="1"><%= data.ACH_TRANS_ID %></font></td>
+									<td><font size="1"><%= data.ERROR_CODE %></font></td>
+									<td><font size="1"><%= data.ERROR_REASON_SEV_CODE %></font></td>
+									<td><font size="1"><%= data.ERROR_TYPE %></font></td>
+									<td><font size="1"><%= data.ERROR_TEXT %></font></td>
+									<td><font size="1">
+										<div class="container">
+											<p align= center><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dropDown<%= x %>">Detail</button></p>
+											<div id="dropDown<%= x %>" class="collapse">		
+												<%= data.ERROR_DETAIL %>
+											</div>
+										</div>
+									</font></td>
+									<td><font size="1"><%= data.ERROR_OWNER %></font></td>
+									<td><font size="1"><%= data.AUDIT_TSTAMP %></font></td>
+								</tr>
+							<%  x++;}) %>
+						  </tbody>
+						</table>
+					<% }%>
+				<% }%>
+			</div>
+		</main>
+
+		<nav id="left">
+			<div class="innertube" />
+		</nav>	
+		<div id="right">
+			<div class="innertube">
+			</div>
+		</div>
+<% include partials/footer %>	
