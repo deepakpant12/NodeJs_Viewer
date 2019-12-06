@@ -1,0 +1,6 @@
+{
+	"database":"DDH0SYSTEM",
+	"hostname":"ddh0system.service.test.group",
+	"port":"6585",
+	"protocol":"TCPIP"
+}

@@ -1,0 +1,6 @@
+{
+	"database":"DPH0SYSTEM",
+	"hostname":"dph0system.service.group",
+	"port":"7020",
+	"protocol":"TCPIP"
+}
