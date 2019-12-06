@@ -1,0 +1,473 @@
+//Connection to DB2 /*require the ibm_db module*/
+var ibmdb = require('ibm_db');
+exports.dbSelectStatus = function (referenceId, res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	var myQuery = "SELECT * FROM "+req.session.user.environment+".TAL_AUDIT_LOG where PAYMNT_REF_NUM ='"+ referenceId+"' AND ACTIVITY_ID = 'ACH_IFW_RES_IH_ClientResponse' WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('loginPage',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('loginPage',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				res.render('loginPage',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+exports.dbSelectTAL = function (referenceId, res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	var myQuery = "SELECT * FROM "+req.session.user.environment+".TAL_AUDIT_LOG where PAYMNT_REF_NUM ='"+ referenceId+"' ORDER BY AUDIT_TSTAMP ASC WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('talLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('talLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('talLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+exports.dbSelectTEL = function (referenceId, fromDate, toDate, res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	var myQuery ;
+	if (referenceId.toString().trim() == null || referenceId.toString().trim() == ''){
+		myQuery	= "SELECT * FROM "+req.session.user.environment+".TEL_EXCEPTION_LOG";
+		if ((fromDate.toString().trim() == null || fromDate.toString().trim() == '') & (toDate.toString().trim() == null || toDate.toString().trim() == '')){
+		}else{
+			myQuery	= myQuery + " WHERE DATE(AUDIT_TSTAMP) >= '"+fromDate+"' AND DATE(AUDIT_TSTAMP) <= '"+toDate+"'" ;
+		}
+	}else{		
+		myQuery	= "SELECT * FROM "+req.session.user.environment+".TEL_EXCEPTION_LOG where PMNT_REF_NUM ='"+ referenceId+"'";
+		if (fromDate.toString().trim() == null & toDate.toString().trim() == null){
+		}else{
+			myQuery	= myQuery + " AND DATE(AUDIT_TSTAMP) >= '"+fromDate+"' AND DATE(AUDIT_TSTAMP) <= '"+toDate+"'" ;
+		}
+	}
+	myQuery = myQuery + " ORDER BY AUDIT_TSTAMP ASC WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('telLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('telLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('telLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+exports.dbSelectTBA = function (referenceId, res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	if (referenceId.toString().trim() != null){
+		var myQuery = "SELECT * FROM "+req.session.user.environment+".TBA_BATCH_AUDIT_LOG where REQUESTID LIKE '"+ referenceId+"%'";
+	}else{
+		var myQuery = "SELECT * FROM "+req.session.user.environment+".TBA_BATCH_AUDIT_LOG ";
+	}
+	myQuery = myQuery + " ORDER BY AUDIT_TSTAMP ASC WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('tbaLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('tbaLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('tbaLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+exports.dbSelectTSS = function (referenceId, createDate, res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	
+	var myQuery;
+	myQuery = "SELECT * FROM "+req.session.user.environment+".TSS_SESSION_STATE WHERE DATE(CREATE_TSTMP) = '"+ createDate + "'";
+	if (referenceId.toString().trim() == null || referenceId.toString().trim() == ''){
+		//Do nothing
+	}else{
+		myQuery = myQuery + " AND UNIQUE_ID ='"+ referenceId+"'";
+	}
+	myQuery = myQuery + " ORDER BY CREATE_TSTMP ASC WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('tssLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('tssLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('tssLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+exports.dbSelectTABL = function (referenceId, batchid,res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	var myQuery = "SELECT * FROM "+req.session.user.environment+".TABL_ACH_BATCH_LOG";
+	if (batchid.toString().trim() == null || batchid.toString().trim() == ''){
+		if (referenceId.toString().trim() == null || referenceId.toString().trim() == ''){
+			//do nothing
+		}else{
+			myQuery = myQuery + " WHERE PAYMNT_REF_NUM = '"+ referenceId+"'";
+		}
+	}else{
+		myQuery = myQuery + " WHERE BATCH_ID = '"+ batchid+"'";
+		if (referenceId.toString().trim() == null || referenceId.toString().trim() == ''){
+			//do nothing
+		}else{
+			myQuery = myQuery + " AND PAYMNT_REF_NUM = '"+ referenceId+"'";
+		}
+	}
+	myQuery = myQuery + " ORDER BY AUDIT_TSTAMP ASC WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('tablLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('tablLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('tablLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+exports.dbSelectTABC = function (trigger, eventDate, status, res , req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	var myQuery;
+	if (status.toString() == "ALL"){		
+		if (trigger.toString().trim() != "select") {
+			myQuery = "SELECT * FROM "+req.session.user.environment+".TABC_ACH_BATCH_CONTROL where TRIGGER_TYPE ='"+ trigger+"'";
+			if (eventDate.toString().trim() == null || eventDate.toString().trim() == ''){//do nothing
+			}else{
+				var date = eventDate.split("-");
+				eventDate = date[2]+date[1]+date[0]
+				myQuery = myQuery +" AND BATCH_ID like '" + eventDate +"%'" ;
+			}
+		}else{
+			myQuery = "SELECT * FROM "+req.session.user.environment+".TABC_ACH_BATCH_CONTROL";
+			if ((eventDate.toString().trim() == null) || (eventDate.toString().trim() == '')){//do nothing
+			}else{
+				var date = eventDate.split("-");
+				eventDate = date[2]+date[1]+date[0]
+				myQuery = myQuery + " where BATCH_ID like '" + eventDate +"%'" ;
+			}
+		}
+	}else{
+		myQuery = "SELECT * FROM "+req.session.user.environment+".TABC_ACH_BATCH_CONTROL WHERE STATUS = '" + status +"'";
+		if (trigger.toString().trim() != "select") {
+			myQuery = myQuery+ " AND TRIGGER_TYPE ='"+ trigger+"'";
+			if (eventDate.toString().trim() == null || eventDate.toString().trim() == ''){//do nothing
+			}else{
+				var date = eventDate.split("-");
+				eventDate = date[2]+date[1]+date[0]
+				myQuery = myQuery +" AND BATCH_ID like '" + eventDate +"%'" ;
+			}
+		}else{
+			if ((eventDate.toString().trim() != null) || (eventDate.toString().trim() != '')){//do nothing
+			}else{
+				var date = eventDate.split("-");
+				eventDate = date[2]+date[1]+date[0]
+				myQuery = myQuery + " AND BATCH_ID like '" + eventDate +"%'" ;
+			}
+		}
+	}
+	myQuery = myQuery + " ORDER BY AUDIT_TSTAMP ASC WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('tabcLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('tabcLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('tabcLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+
+exports.dbSelectTPS = function (referenceId, res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	var myQuery = "SELECT * FROM "+req.session.user.environment+".TPS_POSTING_STATE where PAYMNT_REF_NUM ='"+ referenceId+"' ORDER BY CREATE_TSTMP ASC WITH UR";
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('tpsLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('tpsLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('tpsLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};
+
+exports.dbSelectTSL = function (referenceId, batchid,res, req){
+	console.log("User: " + req.session.user.userName + " for Env: " + req.session.user.environment);
+	var myQuery = "SELECT * FROM "+req.session.user.environment+".TSL_STANDIN_LOG";
+	if (batchid.toString().trim() == null || batchid.toString().trim() == ''){
+		if (referenceId.toString().trim() == null || referenceId.toString().trim() == ''){
+			//do nothing
+		}else{
+			myQuery = myQuery + " WHERE PAYMNT_REF_NUM = '"+ referenceId+"'";
+		}
+	}else{
+		myQuery = myQuery + " WHERE BATCH_ID = '"+ batchid+"'";
+		if (referenceId.toString().trim() == null || referenceId.toString().trim() == ''){
+			//do nothing
+		}else{
+			myQuery = myQuery + " AND PAYMNT_REF_NUM = '"+ referenceId+"'";
+		}
+	}
+	console.log(myQuery);
+	ibmdb.open("DATABASE="+req.session.user.database+";HOSTNAME="+req.session.user.hostname+";UID="+req.session.user.userName+";PWD="+req.session.user.password+";PORT="+req.session.user.port+";PROTOCOL="+req.session.user.protocol, function (err,conn) {
+		if (err) {
+			res.render('tslLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				dbError: 'Unable to connect to DB with' + err
+			});
+			return console.log('Unable to connect to DB with:' +err);
+		}
+		conn.query(myQuery, function (err, data) {
+			if (err){			
+				console.log('Unable to connect to DB ');
+					res.render('tslLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					dbError: 'DB error' + err
+				});
+				return 'Unable to connect to DB:';
+			}else{
+				console.log(data.length);
+				res.render('tslLog',{
+					title: 'ACH Logs',
+					data: data,
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					size: data.length
+				});
+			}
+			conn.close(function () {
+			console.log('done');
+			return data;
+		});
+	  });
+	});
+};

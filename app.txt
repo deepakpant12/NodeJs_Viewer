@@ -1,0 +1,503 @@
+var express = require('express');
+var bodyParser = require('body-parser');
+var path = require('path');
+var expressValidator = require('express-validator');
+var session = require('express-session');
+//const db2 = require('./db2');
+var fs = require('fs');
+
+var app = express();
+
+//View Engine
+app.set('view engine', 'ejs');
+app.set('views',path.join(__dirname,'views'));
+var user;
+//Global 
+app.use(function(req, res, next){
+	res.locals.errors = null;
+	res.locals.error = null;
+	res.locals.data = null;
+	res.locals.dbError = null;
+	res.locals.size = null;
+	res.locals.userName = null;
+	res.locals.password = null;
+	res.locals.environment = null;
+	res.locals.fromDate = null;
+	res.locals.toDate = null;
+	next();
+});
+
+//Body Parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use('/css', express.static('css'))
+// Set Static Path
+app.use(express.static(path.join(__dirname,'public')));
+app.use(session({
+	secret:"sdlkfadlfhadfhafauyrqeworiouewrezcvnmzdv",
+	resave:false,
+	saveUninitialized:true,
+	cookie: {
+    path: '/',
+    httpOnly: true,
+    secure: false,
+    maxAge: 24 * 60 * 60 * 1000,
+    signed: false
+  }
+}));
+//Express Validator
+app.use(expressValidator({
+	errorFormatter: function(param, msg, value){
+		var namespace = param.split('.')
+			,root     = namespace.shift()
+			,formParam = root;
+		while(namespace.length){
+			formParam += '[' + namespace.shift() + ']';
+		}
+		return{
+		param : formParam,
+		msg   : msg,
+		value : value
+		};
+	}
+}));
+
+app.get('/', function(req,res){
+	res.render('index',{
+		title: 'ACH Logs'
+	});
+});
+//CALL DB for details
+app.post('/tal', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		req.checkBody('referenceId', 'Reference Id is mendatory').notEmpty();
+		var errors = req.validationErrors();
+		if(errors){
+			res.render('talLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				errors: errors
+			});
+		}else{
+			console.log('Success');
+			//db2.dbSelectTAL(req.body.referenceId, res, req);
+		}
+	}
+});
+
+app.post('/tel', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		var date1 = req.body.fromDate;
+		var date2 = req.body.toDate;
+		if ((date1.toString().trim() == null || date1.toString().trim() == '') || (date2.toString().trim() == null || date2.toString().trim() == '')){
+			req.checkBody('fromDate', 'From date is mendatory').notEmpty();
+			req.checkBody('toDate', 'To date is mendatory').notEmpty();
+			var errors = req.validationErrors();
+			if(errors){
+				res.render('telLog',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					errors: errors
+				});
+			}
+		}else{
+			console.log('Success: ');
+		//	db2.dbSelectTEL(req.body.referenceId,date1,date2,res,req);
+		}
+	}
+});
+
+app.post('/tba', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		req.checkBody('referenceId', 'Trigger request Id is mendatory').notEmpty();
+		var errors = req.validationErrors();
+
+		if(errors){
+			res.render('tbaLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				errors: errors
+			});
+		}else{
+			console.log('Success');
+			//db2.dbSelectTBA(req.body.referenceId, res, req);
+		}
+	}
+});
+
+app.post('/tss', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		req.checkBody('createDate', 'Trigger date is mendatory').notEmpty();
+		var errors = req.validationErrors();
+		
+		if(errors){
+			res.render('tssLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				errors: errors
+			});
+		}else{
+			console.log('Success');
+			//db2.dbSelectTSS(req.body.referenceId, req.body.createDate, res, req);
+		}
+	}
+});
+
+app.post('/tabl', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		req.checkBody('batchid', 'Batch id is mendatory field').notEmpty();
+		var errors = req.validationErrors();
+		
+		if(errors){
+			res.render('tablLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				errors: errors
+			});
+		}else{
+			console.log('Success');
+			//db2.dbSelectTABL(req.body.referenceId,req.body.batchid, res, req);
+		}
+	}
+});
+
+app.post('/tabc', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		console.log('Success');
+		//db2.dbSelectTABC(req.body.trigger,req.body.eventDate,req.body.status, res, req);
+	}
+});
+
+app.post('/tps', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		req.checkBody('referenceId', 'Transaction reference number is required').notEmpty();
+		var errors = req.validationErrors();
+		
+		if(errors){
+			res.render('tpsLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				errors: errors
+			});
+		}else{
+			console.log('Success');
+			//db2.dbSelectTPS(req.body.referenceId, res, req);
+		}
+	}
+});
+
+app.post('/tsl', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		req.checkBody('batchid', 'Batch id is required').notEmpty();
+		var errors = req.validationErrors();
+		
+		if(errors){
+			res.render('tslLog',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				errors: errors
+			});
+		}else{
+			console.log('Success');
+			db2.dbSelectTSL(req.body.referenceId,req.body.batchid, res, req);
+		}
+	}
+});
+
+app.post('/login', function(req,res){
+	req.checkBody('environment', 'Environment name is required').notEmpty();
+	var errors = req.validationErrors();
+	if(errors){
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Environment name is required'
+		});
+	}else{
+		if(req.body.environment.includes('PRD')){
+			var config = JSON.parse(fs.readFileSync('./config/configProd.json'));
+			console.log('Successfull set cinfig value for prod env');
+		}else{
+			var config = JSON.parse(fs.readFileSync('./config/config.json'));
+			console.log('Successfull set cinfig value for pre-prod env');
+		}
+		user=({userName:req.body.userid, password:req.body.password,environment:req.body.environment,database:config.database, hostname:config.hostname, port:config.port, protocol: config.protocol});
+		req.session.user = user;
+		console.log('Successfull Login with UserId '+ req.session.user.userName + ' to Env: ' +req.session.user.environment);
+		res.render('loginPage',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+
+app.post('/status', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		req.checkBody('referenceId', 'Reference Id is mendatory').notEmpty();
+		var errors = req.validationErrors();
+		if(errors){
+			res.render('loginPage',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				errors: errors
+			});
+		}else{
+			console.log('Success');
+			db2.dbSelectStatus(req.body.referenceId, res, req);
+		}
+	}
+});
+
+
+app.post('/serviceStats', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		var date1 = req.body.searchWithDate;
+		if (date1.toString().trim() == null || date1.toString().trim() == ''){
+			req.checkBody('searchWithDate', 'Date is mendatory field').notEmpty();
+			var errors = req.validationErrors();
+			if(errors){
+				res.render('ServiceStatistics',{
+					title: 'ACH Logs',
+					userName: req.session.user.userName,
+					environment: req.session.user.environment,
+					errors: errors
+				});
+			}
+		}else{
+			console.log('Success: ');
+			res.render('ServiceStatistics',{
+				title: 'ACH Logs',
+				userName: req.session.user.userName,
+				environment: req.session.user.environment,
+				data: 1
+			});
+		}
+	}
+});
+app.get('/tal', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('talLog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/tel', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('telLog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/tba', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('tbaLog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/tabc', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('tabclog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/tabl', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('tablLog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/tss', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('tssLog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/logout', function(req,res){
+	req.session.destroy();
+	res.render('index',{
+		title: 'ACH Logs',
+	});
+});
+app.get('/login', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('loginPage',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+
+app.get('/search/tabl/:batchId', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		var batchid =req.params.batchId; 
+		console.log(batchid);
+		if (batchid.includes('TT30'))
+		{
+			db2.dbSelectTSL('',batchid, res, req);
+		}else{
+			db2.dbSelectTABL('',batchid, res, req);
+		}
+	}
+});
+
+app.get('/tps', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('tpsLog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/tsl', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('tslLog',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+app.get('/serviceStats', function(req,res){
+	if (req.session.user == null){//check for login session
+		res.render('index',{
+			title: 'ACH Logs',
+			error: 'Session timed out - please login again'
+		});
+	}else{
+		res.render('ServiceStatistics',{
+			title: 'ACH Logs',
+			userName: req.session.user.userName,
+			environment: req.session.user.environment
+		});
+	}
+});
+
+app.listen(3000, function(){
+	console.log('Server Started on port 3000');
+})
